@@ -52,15 +52,25 @@ RSpec.describe Scim::Kit::V2::Configuration do
       x
     end
 
+    def list_response(collection)
+      {
+        schemas: [Scim::Kit::V2::Messages::LIST_RESPONSE],
+        totalResults: collection.size,
+        startIndex: 1,
+        itemsPerPage: collection.size,
+        Resources: [collection]
+      }
+    end
+
     before do
       stub_request(:get, "#{base_url}/ServiceProviderConfig")
         .to_return(status: 200, body: service_provider_configuration.to_json)
 
       stub_request(:get, "#{base_url}/Schemas")
-        .to_return(status: 200, body: [schema.to_h].to_json)
+        .to_return(status: 200, body: list_response(schema.to_h).to_json)
 
       stub_request(:get, "#{base_url}/ResourceTypes")
-        .to_return(status: 200, body: [resource_type.to_h].to_json)
+        .to_return(status: 200, body: list_response(resource_type.to_h).to_json)
 
       subject.load_from(base_url)
     end
