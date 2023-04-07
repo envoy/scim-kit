@@ -64,7 +64,8 @@ module Scim
         attr_reader :http
 
         def load_items(base_url, path, type, items)
-          hashes = http.get(URI.join(base_url, path))
+          results = http.get(URI.join(base_url, path))
+          hashes = results[:Resources]
           hashes.each do |hash|
             item = type.from(hash)
             items[item.id] = item
